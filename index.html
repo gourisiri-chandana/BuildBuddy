@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BuildBuddy</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+
+        header {
+            height: 65px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 28px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .status {
+            color: #16a34a;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* MAIN */
+
+        .container {
+            display: flex;
+            height: calc(100vh - 65px);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 330px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            padding: 22px;
+
+            overflow-y: auto;
+        }
+
+        .overview {
+            background: #111827;
+            color: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 22px;
+        }
+
+        .overview h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .overview p {
+            margin: 0;
+            color: #d1d5db;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .stack-item {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 9px;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        /* MEMORY */
+
+        .memory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .count {
+            background: #111827;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 7px;
+            margin: 12px 0;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 9px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .search-box button {
+            border: none;
+            background: #111827;
+            color: white;
+            border-radius: 8px;
+            padding: 0 12px;
+            cursor: pointer;
+        }
+
+        .memory {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 11px;
+            border-radius: 9px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        /* CHAT */
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 18px 28px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .chat-header h2 {
+            margin: 0 0 4px;
+        }
+
+        .chat-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 28px;
+            overflow-y: auto;
+        }
+
+        .welcome {
+            max-width: 650px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 50px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* CHAT BUBBLES */
+
+        .message {
+            max-width: 750px;
+            margin: 0 auto 18px;
+            display: flex;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .bubble {
+            padding: 13px 16px;
+            border-radius: 14px;
+            max-width: 75%;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .user .bubble {
+            background: #111827;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .assistant .bubble {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .memory-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .thinking {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* INPUT */
+
+        .input-area {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 15px 28px;
+        }
+
+        .input-box {
+            max-width: 850px;
+            margin: auto;
+            display: flex;
+            gap: 9px;
+        }
+
+        .input-box input {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-box button {
+            border: none;
+            border-radius: 10px;
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .send-btn {
+            background: #111827;
+            color: white;
+        }
+
+        .remember-btn {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .input-box button:hover {
+            opacity: 0.85;
+        }
+
+        @media (max-width: 850px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="logo">
+            🤖 BuildBuddy
+        </div>
+
+        <div class="status">
+            ● Hindsight Memory Connected
+        </div>
+
+    </header>
+
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="overview">
+
+                <h2>BuildBuddy</h2>
+
+                <p>
+                    AI coding companion that remembers project
+                    decisions, bugs, solutions and developer preferences.
+                </p>
+
+            </div>
+
+
+            <div class="section-title">
+                ⚙️ Project Stack
+            </div>
+
+            <div class="stack-item">
+                🐍 Python
+            </div>
+
+            <div class="stack-item">
+                ⚡ FastAPI
+            </div>
+
+            <div class="stack-item">
+                🐘 PostgreSQL
+            </div>
+
+            <div class="stack-item">
+                🔐 JWT Authentication
+            </div>
+
+
+            <div class="memory-header">
+
+                <div class="section-title">
+                    🧠 Project Memory
+                </div>
+
+                <span class="count" id="memoryCount">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    id="memorySearch"
+                    type="text"
+                    placeholder="Search memory..."
+                    onkeydown="handleKey(event)"
+                >
+
+                <button onclick="handleMemorySearch()">
+                    🔍
+                </button>
+
+            </div>
+
+
+            <div id="memoryList">
+
+                Loading memories...
+
+            </div>
+
+        </aside>
+
+
+        <!-- CHAT -->
+
+        <main class="chat-area">
+
+            <div class="chat-header">
+
+                <h2>💬 Chat with BuildBuddy</h2>
+
+                <p>
+                    Ask questions about your project and BuildBuddy
+                    can use its stored project memory.
+                </p>
+
+            </div>
+
+
+            <div class="messages" id="messages">
+
+                <div class="welcome">
+
+                    <div class="welcome-icon">
+                        🧠
+                    </div>
+
+                    <h1>
+                        Hey! I'm BuildBuddy
+                    </h1>
+
+                    <p>
+                        I remember your project's decisions,
+                        bugs, solutions and coding preferences.
+                    </p>
+
+                    <p>
+                        Try asking:
+                        <br><br>
+                        <b>
+                            "How should I implement authentication?"
+                        </b>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="input-area">
+
+                <div class="input-box">
+
+                    <input
+                        id="messageInput"
+                        type="text"
+                        placeholder="Ask BuildBuddy something..."
+                        onkeydown="handleKey(event)"
+                    >
+
+                    <button
+                        class="remember-btn"
+                        onclick="rememberMemory()"
+                    >
+                        🧠 Remember
+                    </button>
+
+                    <button
+                        class="send-btn"
+                        onclick="sendMessage()"
+                    >
+                        Send
+                    </button>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script>
+
+        /* ENTER KEY */
+
+        function handleKey(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                if (event.target.id === "messageInput") {
+
+                    sendMessage();
+
+                }
+
+                if (event.target.id === "memorySearch") {
+
+                    handleMemorySearch();
+
+                }
+
+            }
+
+        }
+
+
+        /* ADD MESSAGE */
+
+        function addMessage(text, type, memoryUsed = false) {
+
+            const messages = document.getElementById("messages");
+
+            const welcome = document.querySelector(".welcome");
+
+            if (welcome) {
+
+                welcome.remove();
+
+            }
+
+            const message = document.createElement("div");
+
+            message.className = "message " + type;
+
+
+            const bubble = document.createElement("div");
+
+            bubble.className = "bubble";
+
+            bubble.textContent = text;
+
+
+            if (memoryUsed) {
+
+                const badge = document.createElement("div");
+
+                badge.className = "memory-badge";
+
+                badge.textContent = "🧠 Project memory used";
+
+                bubble.appendChild(badge);
+
+            }
+
+
+            message.appendChild(bubble);
+
+            messages.appendChild(message);
+
+            messages.scrollTop = messages.scrollHeight;
+
+        }
+
+
+        /* SEND MESSAGE */
+
+        async function sendMessage() {
+
+            const input =
+                document.getElementById("messageInput");
+
+            const message =
+                input.value.trim();
+
+
+            if (!message) {
+
+                return;
+
+            }
+
+
+            addMessage(message, "user");
+
+            input.value = "";
+
+
+            const messages =
+                document.getElementById("messages");
+
+
+            const thinking =
+                document.createElement("div");
+
+            thinking.className = "message assistant";
+
+            thinking.id = "thinking";
+
+
+            thinking.innerHTML =
+                '<div class="bubble thinking">🧠 BuildBuddy is thinking...</div>';
+
+
+            messages.appendChild(thinking);
+
+            messages.scrollTop = messages.scrollHeight;
+
+
+            try {
+
+                const response = await fetch("/chat", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message
+                    })
+
+                });
+
+
+                const data = await response.json();
+
+
+                thinking.remove();
+
+
+                addMessage(
+                    data.answer,
+                    "assistant",
+                    data.memory_used
+                );
+
+
+                loadMemories();
+
+            }
+
+            catch (error) {
+
+                thinking.remove();
+
+                addMessage(
+                    "Sorry, something went wrong. Please try again.",
+                    "assistant"
+                );
+
+            }
+
+        }
+
+
+        /* REMEMBER */
+
+        async function rememberMemory() {
+
+            const input =
+                document.getElementById("messageInput");
+
+            const memory =
+                input.value.trim();
+
+
+            if (!memory) {
+
+                alert("Type something you want me to remember.");
+
+                return;
+
+            }
+
+
+            try {
+
+                const response = await fetch("/remember", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        memory: memory
+                    })
+
+                });
+
+
+                const data = await response.json();
+
+
+                input.value = "";
+
+
+                addMessage(
+                    "Got it! I saved that to project memory. 🧠",
+                    "assistant",
+                    true
+                );
+
+
+                loadMemories();
+
+            }
+
+            catch (error) {
+
+                alert("Could not save memory.");
+
+            }
+
+        }
+
+
+        /* LOAD MEMORIES */
+
+        async function loadMemories() {
+
+            try {
+
+                const response =
+                    await fetch("/memories");
+
+                const data =
+                    await response.json();
+
+
+                document.getElementById("memoryCount")
+                    .textContent = data.count;
+
+
+                const list =
+                    document.getElementById("memoryList");
+
+
+                list.innerHTML = "";
+
+
+                for (let memory of data.memories) {
+
+                    const div =
+                        document.createElement("div");
+
+                    div.className = "memory";
+
+                    div.textContent = "✓ " + memory;
+
+                    list.appendChild(div);
+
+                }
+
+            }
+
+            catch (error) {
+
+                document.getElementById("memoryList")
+                    .textContent =
+                    "Could not load memories.";
+
+            }
+
+        }
+
+
+        /* SEARCH MEMORY */
+
+        async function handleMemorySearch() {
+
+            const input =
+                document.getElementById("memorySearch");
+
+            const query =
+                input.value.trim();
+
+
+            if (!query) {
+
+                loadMemories();
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch("/search-memory", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            query: query
+                        })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                const list =
+                    document.getElementById("memoryList");
+
+
+                list.innerHTML = "";
+
+
+                document.getElementById("memoryCount")
+                    .textContent = data.count;
+
+
+                for (let memory of data.memories) {
+
+                    const div =
+                        document.createElement("div");
+
+                    div.className = "memory";
+
+                    div.textContent = "✓ " + memory;
+
+                    list.appendChild(div);
+
+                }
+
+            }
+
+            catch (error) {
+
+                alert("Memory search failed.");
+
+            }
+
+        }
+
+
+        /* LOAD ON START */
+
+        loadMemories();
+
+    </script>
+
+</body>
+
+</html>
